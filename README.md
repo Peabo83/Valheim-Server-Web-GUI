@@ -49,4 +49,5 @@ Change $username and $password to your preffered values. Change $random1 and $ra
 
 ======
 
-sudo chmod -R 770 /home/steam/valheimserver/BepInEx/config
+sudo chmod -R 775 /home/steam/valheimserver/BepInEx/config
+sudo usermod -a -G steam www-data
