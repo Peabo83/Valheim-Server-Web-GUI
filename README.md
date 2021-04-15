@@ -2,7 +2,7 @@
 This is a 'no database' web GUI built on Nimdy's Dedicated Valheim server script ( https://github.com/Nimdy/Dedicated_Valheim_Server_Script )
 *Requires Apache2, PHP and PHP command 'shell_exec' enabled
 
-#Install instructions
+## Install instructions
 These instrcutions assume you are working on Ubuntu server.
 
 1) Follow Nimdy's instuctions for setting up and configuring your Valheim server ( https://github.com/Nimdy/Dedicated_Valheim_Server_Script#readme )
