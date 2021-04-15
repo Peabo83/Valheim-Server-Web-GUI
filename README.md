@@ -18,6 +18,8 @@ Verify that the install was successful by putting the IP of the server in your w
 3) Remove the default index.html file from /var/www/html and then install repository to /var/www/html
 
 '''
+cd ~
 sudo rm /var/www/html/index.html
+git clone https://github.com/Peabo83/Valheim-Server-Web-GUI.git
+sudo cp ~/Valheim-Server-Web-GUI/valheim.php /var/www/html/
 '''
-
