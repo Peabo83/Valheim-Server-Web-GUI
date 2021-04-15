@@ -46,3 +46,7 @@ $self = $_SERVER['REQUEST_URI'];
 ?>
 ```
 Change $username and $password to your preffered values. Change $random1 and $random2 to any variables of your choice, like 'Valheim365' and 'OdinRules'.
+
+======
+
+sudo chmod -R 770 /home/steam/valheimserver/BepInEx/config
