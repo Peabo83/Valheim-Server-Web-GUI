@@ -23,3 +23,5 @@ sudo rm /var/www/html/index.html
 git clone https://github.com/Peabo83/Valheim-Server-Web-GUI.git
 sudo cp ~/Valheim-Server-Web-GUI/index.php /var/www/html/
 ```
+
+Now when visting the IP of the server you should see the main GUI screen.
