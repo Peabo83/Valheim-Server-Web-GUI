@@ -31,13 +31,12 @@ Verify that the install was successful by putting the IP of the server in your w
 
 Note: If you click the little open arrow in the GCP VM management panel next to the server IP it will go to http<b><u>s</u></b>://your-IP, which will not work without further configuration.
 
-3) Remove the default index.html file from /var/www/html and then install repository to /var/www/html
+3) Remove the default html folder from /var/www/ and then install repository to /var/www/
 
 ```
-cd ~
-sudo rm /var/www/html/index.html
+sudo rm -R /var/www/html/
+cd /var/www
 git clone https://github.com/Peabo83/Valheim-Server-Web-GUI.git
-sudo cp ~/Valheim-Server-Web-GUI/index.php /var/www/html/
 ```
 
 Now when visting the IP of the server you should see the main GUI screen.
