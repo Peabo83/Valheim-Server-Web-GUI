@@ -1,4 +1,7 @@
 # Valheim-Server-Web-GUI
+
+# This repository is still a work in progress
+
 This is a 'no database' web GUI built on Nimdy's Dedicated Valheim server script ( https://github.com/Nimdy/Dedicated_Valheim_Server_Script )
 
 ## Features
