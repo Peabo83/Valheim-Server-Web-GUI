@@ -29,7 +29,7 @@ sudo apt install php libapache2-mod-php
 
 Verify that the install was successful by putting the IP of the server in your web browser. You should see the default Apache2 Ubuntu page. If you have connection issues with this default page, you should verify that HTTP is enabled on the VM.
 
-### Note: If you click the little open arrow in the GCP VM management panel next to the server IP it will go to http<b>S</b>://your-IP, which will not work without further configuration.
+Note: If you click the little open arrow in the GCP VM management panel next to the server IP it will go to http<b>s</b>://your-IP, which will not work without further configuration.
 
 3) Remove the default index.html file from /var/www/html and then install repository to /var/www/html
 
