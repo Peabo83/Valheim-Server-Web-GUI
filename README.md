@@ -34,9 +34,10 @@ Note: If you click the little open arrow in the GCP VM management panel next to 
 3) Remove the default html folder from /var/www/ and then install repository to /var/www/
 
 ```
-sudo rm -R /var/www/html/
-cd /var/www
+sudo rm -R /var/www/
+cd ~
 git clone https://github.com/Peabo83/Valheim-Server-Web-GUI.git
+sudo cp -R ~/Valheim-Server-Web-GUI/www/ /var/
 ```
 
 Now when visting the IP of the server you should see the main GUI screen.
