@@ -1,6 +1,17 @@
 # Valheim-Server-Web-GUI
 This is a 'no database' web GUI built on Nimdy's Dedicated Valheim server script ( https://github.com/Nimdy/Dedicated_Valheim_Server_Script )
-*Requires Apache2, PHP and PHP command 'shell_exec' enabled
+
+## Features
+
+- Web page that publicly shows the status of valheimserver.service
+- Looks at your /BepInEx/config folder and can publicly display mods installed with a link to their Nexus page (some mods may require a CFG edit to display)
+- When logged in, gives you the ability to edit the CFG mod files with an in-browser editor
+- (Incomplete) When logged in, turn off/on the valheimserver.service process from a browser
+
+## Credits
+
+Simple no database login from https://gist.github.com/thagxt/94b976db4c8f14ec1527
+In-browser editor code from https://github.com/pheditor/pheditor
 
 ## Install instructions
 These instrcutions assume you are working on Ubuntu server.
@@ -51,3 +62,19 @@ Change $username and $password to your preffered values. Change $random1 and $ra
 
 sudo chmod -R 777 /home/steam/valheimserver/BepInEx/config
 sudo usermod -a -G steam www-data
+
+## Making Mods Show up on the Public list of Mods
+
+Some mods will work automatically, but some will not. If you have a mod installed and it's not displaying you will need to add the mods nexus ID to it's CFG file like this:
+
+```
+NexusID = ###
+```
+
+Please note that this formatting must be exact, including the spaces around the equals sign.
+
+A mod's NexusID appears in the URL of the mod, for example the URL for ValheimPlus is: https://www.nexusmods.com/valheim/mods/4 - That number at the end is the ID, so in the case of ValheimPlus the nexus ID is 4. To have this mod display in the list you would add the following to valheim_plus.cfg:
+
+```
+NexusID = 4
+```
