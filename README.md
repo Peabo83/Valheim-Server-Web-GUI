@@ -10,7 +10,7 @@ This is a 'no database' web GUI built on Nimdy's Dedicated Valheim server script
 
 ## Credits
 
-Simple no database login from https://gist.github.com/thagxt/94b976db4c8f14ec1527
+Simple no database login from https://gist.github.com/thagxt/94b976db4c8f14ec1527<br>
 In-browser editor code from https://github.com/pheditor/pheditor
 
 ## Install instructions
