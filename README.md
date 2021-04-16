@@ -58,9 +58,9 @@ $self = $_SERVER['REQUEST_URI'];
 ```
 Change $username and $password to your preffered values. Change $random1 and $random2 to any variables of your choice, like 'Valheim365' and 'OdinRules'.
 
-======
 
-sudo chmod -R 777 /home/steam/valheimserver/BepInEx/config
+=== Incomplete Directions ===
+sudo chmod -R 777 /home/steam/valheimserver/BepInEx/config<br>
 sudo usermod -a -G steam www-data
 
 ## Making Mods Show up on the Public list of Mods
