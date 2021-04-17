@@ -7,6 +7,7 @@ This is a 'no database' web GUI built on Nimdy's Dedicated Valheim server script
 - Web page that publicly shows the status of valheimserver.service
 - Has a public facing Copy to clipboard button for easy pasting into Valheim
 - Looks at your /BepInEx/config folder and can publicly display mods installed with a link to their Nexus page or display a defined list of mods
+- Can show (publicly or not) the Seed of the running world
 ### When Logged in
 - Gives you the ability to edit the CFG mod files with an in-browser editor
 - Turn off/on the valheimserver.service process
