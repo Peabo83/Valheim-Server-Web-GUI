@@ -23,6 +23,11 @@ if (isset($_GET['restart'])) {
   header("Location: $_SERVER[PHP_SELF]");
   exit;
 }
+if (isset($_GET['seed'])) {
+  $command = exec('sudo cp -R /home/steam/.config/unity3d/IronGate/Valheim/worlds/* /var/www/html/download/');
+  header("Location: $_SERVER[PHP_SELF]");
+  exit;
+}
 
           // Get the status of valheimserver.service
           $info = shell_exec('systemctl status --no-pager -l valheimserver.service');
@@ -35,6 +40,7 @@ if (isset($_GET['restart'])) {
           $port = str_replace("-port ", "", substr($port, 0, strpos($port, "-world")));
           $world = strstr($info, '-world');
           $world = str_replace("-world ", "", substr($world, 0, strpos($world, "-password")));
+          $world = str_replace(" ", "", $world);
           $world_perm = $world;
           $public = strstr($info, '-public');
           $public = str_replace("-public ", "", $public);
@@ -75,6 +81,31 @@ if (isset($_GET['restart'])) {
             $no_download_class = "danger";
             $url_copy = '';
             $start_attr = 'disabled';
+          }
+
+          if (file_exists("/var/www/html/download/".$world.".fwl")) {
+            $raw_fwl = shell_exec("hexdump -C /var/www/html/download/".$world.".fwl");
+            $tempy = preg_match_all("/\|(.*)\|/siU", $raw_fwl, $hexdata_matches);
+            $seed = $hexdata_matches[0][0] . $hexdata_matches[0][1];
+            $seed = str_replace('.', ' ', $seed);
+            $seed = str_replace('|', '', $seed);
+            $seed_array = explode(' ', $seed);
+            foreach ($seed_array as $key => $value) {
+              if (!empty($value)) {
+                $seed_output_array[] = $value;
+              }
+            }
+            $seed = $seed_output_array[2];
+            $has_seed = true;
+            if ($make_seed_public == true) {
+              $text_row = '7';
+            } else {
+              $text_row = '8';
+            }
+          } else {
+            $seed = "<button class=\"btn btn-xs btn-success\" onclick=\"location.href='index.php?seed=true';\">Get Seed</button>";
+            $has_seed = false;
+            $text_row = '8';
           }
 
 if (isset($_GET['download_db'])) {
@@ -898,14 +929,18 @@ if(isset($_GET['logout'])) {
               Server Executing Command, Please wait.
             </div>
           </div>
-
-
               <div class="row alert alert-<?php echo $alert_class; ?>" role="alert">
-                <div class="col-8 h6"><span class="glyphicon glyphicon-hdd" aria-hidden="true"></span> <?php echo $active; ?></div>
+                <div class="col-<?php echo $text_row;?> h6"><span class="glyphicon glyphicon-hdd" aria-hidden="true"></span> <?php echo $active; ?></div>
                 <div class="col-4 <?php echo $url_copy;?>">
                       <button id="copyButton" title="Click to copy" class="btn input-group-addon btn-<?php echo $alert_class;?>" <?php echo $alert_attr;?>><span class="glyphicon glyphicon-copy"></span></button>
                       <input type="text" id="copyTarget" class="form-control" value="<?php echo $realIP . ':' . $port;?>">
                 </div>
+                <?php
+                if ($make_seed_public == true && $has_seed == true ) { ?>
+                <div class="col-1">
+                  <button class="btn btn-success view-world" onclick="window.open('http://valheim-map.world/?seed=<?php echo $seed; ?>&offset=506%2C778&zoom=0.077&view=0&ver=0.148.6')"><span class="glyphicon glyphicon-globe"></span></button>
+                </div>
+                <?php } ?>
               </div>
         <?php
         if ($mod_file_count > 0 && $show_mods == true) {
@@ -996,7 +1031,8 @@ if(isset($_GET['logout'])) {
           <div class="panel-body">
             <label class="label label-info">Port</label> <?php echo $port; ?>
             <label class="label label-info">World</label> <?php echo $world; ?>
-            <label class="label label-info">Public</label> <?php echo $public_status; ?><br><br>
+            <label class="label label-info">Public</label> <?php echo $public_status; ?>
+            <label class="label label-info">Seed</label> <?php echo $seed; ?><br><br>
             <button class="btn btn-danger server-function" onclick="location.href='index.php?stop=true';" <?php echo $public_attr;?>>Stop</button> 
             <button class="btn btn-success server-function" onclick="location.href='index.php?start=true';" <?php echo $start_attr;?>>Start</button> 
             <button class="btn btn-warning server-function" onclick="location.href='index.php?restart=true';" <?php echo $public_attr;?>>Restart</button> 
@@ -1104,9 +1140,7 @@ if(isset($_GET['logout'])) {
           </div>
         </div>
       </div>              
-      <?php
-      }; ?>
-
+      <?php } // End if ?>
           <!-- close accordion -->
           </div>
           </div>
@@ -1131,6 +1165,10 @@ if(isset($_GET['logout'])) {
           <div class="col-5"><input type="text" name="username" id="username" class="form-control"></div>
           <div class="col-5"><input type="password" name="password" id="password" class="form-control"></div>
           <div class="col-2"><input class="btn btn-success" type="submit" name="submit" value="submit"></div>
+          <div style="display: none;">
+          <textarea id="editor" data-file="" class="form-control"></textarea>
+          <input id="digest" type="hidden" readonly>
+          </div>
         </form>
     </div>
   <?php } ?>
