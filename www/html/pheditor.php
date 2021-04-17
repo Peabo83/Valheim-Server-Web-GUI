@@ -59,41 +59,6 @@ session_set_cookie_params(86400, dirname($_SERVER['REQUEST_URI']));
 session_name('pheditor');
 session_start();
 
-// if (empty(PASSWORD) === false && (isset($_SESSION['pheditor_admin']) === false || $_SESSION['pheditor_admin'] !== true)) {
-// 	if (isset($_POST['pheditor_password']) && empty($_POST['pheditor_password']) === false) {
-// 		if (hash('sha512', $_POST['pheditor_password']) === PASSWORD) {
-// 			$_SESSION['pheditor_admin'] = true;
-
-// 			redirect();
-// 		} else {
-// 			$error = 'The entry password is not correct.';
-
-// 			$log = file_exists(LOG_FILE) ? unserialize(file_get_contents(LOG_FILE)) : array();
-
-// 			if (isset($log[$_SERVER['REMOTE_ADDR']]) === false) {
-// 				$log[$_SERVER['REMOTE_ADDR']] = array('num' => 0, 'time' => 0);
-// 			}
-
-// 			$log[$_SERVER['REMOTE_ADDR']]['num'] += 1;
-// 			$log[$_SERVER['REMOTE_ADDR']]['time'] = time();
-
-// 			file_put_contents(LOG_FILE, serialize($log));
-// 		}
-// 	} else if (isset($_POST['action'])) {
-// 		header('HTTP/1.0 403 Forbidden');
-
-// 		die('Your session has expired.');
-// 	}
-
-// 	die('<title>Pheditor</title><form method="post"><div style="text-align:center"><h1><a href="http://github.com/hamidsamak/pheditor" target="_blank" title="PHP file editor" style="color:#444;text-decoration:none" tabindex="3">Pheditor</a></h1>' . (isset($error) ? '<p style="color:#dd0000">' . $error . '</p>' : null) . '<input id="pheditor_password" name="pheditor_password" type="password" value="" placeholder="Password&hellip;" tabindex="1"><br><br><input type="submit" value="Login" tabindex="2"></div></form><script type="text/javascript">document.getElementById("pheditor_password").focus();</script>');
-// }
-
-if (isset($_GET['logout'])) {
-	unset($_SESSION['pheditor_admin']);
-
-	// redirect();
-}
-
 $permissions = explode(',', PERMISSIONS);
 $permissions = array_map('trim', $permissions);
 $permissions = array_filter($permissions);
@@ -498,3 +463,4 @@ function json_success($message, $params = [])
 }
 
 ?>
+
