@@ -121,6 +121,7 @@ if (isset($_SESSION['login']) && $_SESSION['login'] == $hash) {
 // ********** USER LOGOUT  ********** //
 if(isset($_GET['logout'])) {
   unset($_SESSION['login']);
+  unset($_SESSION['pheditor_admin']);
   header("Location: $_SERVER[PHP_SELF]");
   exit;
 }
