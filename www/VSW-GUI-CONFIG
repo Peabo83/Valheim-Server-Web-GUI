@@ -1,4 +1,20 @@
 <?php
-  // CONFIG
+// *************************************** //
+// *              VARIABLES              * //
+// *************************************** //
+	$username = 'Default_Admin';
+	$password = 'ch4n93m3';
+	$random1 = 'secret_key1';
+	$random2 = 'secret_key2';
+	$hash = md5($random1.$pass.$random2); 
+	$self = $_SERVER['REQUEST_URI'];
+	$show_mods = true;
+	$cfg_editor = false;
 
+	// Manually add nexus mods to displayed mods insert mod IDs comma delineated as such:
+	// $manual_add_displayed_mods = array('4', '189', '387');
+	$manual_add_displayed_mods = array();
+
+	// Hits ipecho.net to get the VM's actual IP
+    $realIP = file_get_contents("http://ipecho.net/plain");
 ?>
