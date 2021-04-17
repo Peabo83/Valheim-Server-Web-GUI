@@ -116,6 +116,9 @@ html {
 #copyTarget {
   padding-left: 6.5vw;
 }
+.view-world {
+  height: 100%;
+}
 .thumbnail img {
   max-height: 22vh;
 }
@@ -185,6 +188,12 @@ html {
   max-width: 1200px;
   margin:auto;
 }
+.btn-group-xs>.btn, .btn-xs {
+  padding: .15rem .25rem;
+  font-size: .650rem;
+  line-height: 1.5;
+  border-radius: .2rem;
+}
 @media only screen and (min-width: 1201px) {
   html {
   font-size: 24px;
@@ -218,5 +227,8 @@ html {
   }
   .CodeMirror-scroll * {
     font-size: 14px;
+  }
+  #copyTarget {
+    padding-left: 104px;
   }
 }
