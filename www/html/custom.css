@@ -1,0 +1,222 @@
+* {
+
+}
+  .white {
+    color: white;
+}
+  .list-group {
+    max-width: 30vw;
+}
+h1, h1 a, h1 a:hover {
+  margin: 0;
+  padding: 0;
+  color: #444;
+  cursor: default;
+  text-decoration: none;
+}
+#files {
+  padding: 20px 10px;
+  margin-bottom: 10px;
+}
+.CodeMirror.cm-s-default.CodeMirror-wrap, #files {
+  max-height: 80vh;
+}
+#files>div {
+  overflow: auto;
+}
+#path {
+  margin-left: 10px;
+}
+.dropdown-item.close {
+  font-size: 1em !important;
+  font-weight: normal;
+  opacity: 1;
+}
+#loading {
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 9;
+  display: none;
+  position: absolute;
+  background: rgba(0, 0, 0, 0.5);
+}
+.lds-ring {
+  margin: 0 auto;
+  position: relative;
+  width: 64px;
+  height: 64px;
+  top: 45%;
+}
+.lds-ring div {
+  box-sizing: border-box;
+  display: block;
+  position: absolute;
+  width: 51px;
+  height: 51px;
+  margin: 6px;
+  border: 6px solid #fff;
+  border-radius: 50%;
+  animation: lds-ring 1.2s cubic-bezier(0.5, 0, 0.5, 1) infinite;
+  border-color: #fff transparent transparent transparent;
+}
+.lds-ring div:nth-child(1) {
+  animation-delay: -0.45s;
+}
+.lds-ring div:nth-child(2) {
+  animation-delay: -0.3s;
+}
+.lds-ring div:nth-child(3) {
+  animation-delay: -0.15s;
+}
+@keyframes lds-ring {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+.dropdown-menu {
+  min-width: 12rem;
+}
+html {
+  font-size: 2vw;
+}
+@include media-breakpoint-up(sm) {
+  html {
+    font-size: 1.5vw;
+  }
+}
+@include media-breakpoint-up(md) {
+  html {
+    font-size: 2vw;
+  }
+}
+@include media-breakpoint-up(lg) {
+  html {
+    font-size: 3vw;
+  }
+}
+.panel-title {
+  font-size: 3vw;
+}
+.panel-title a {
+  text-decoration: none;
+}
+.panel-title a:hover {
+  color:white;
+}
+#copyButton {
+  position: absolute;
+  height: 100%;
+  min-width: 5vw;
+}
+#copyTarget {
+  padding-left: 6.5vw;
+}
+.thumbnail img {
+  max-height: 22vh;
+}
+.thumbnail {
+  font-size: 1.5vw;
+  height: 96%;
+}
+.thumbnail .caption {
+  font-size: 2vw;
+}
+.login input.button {
+  height: 100%;
+}
+/* Bootstrap Accordion Visual Fix */
+.collapse.in {
+  display: block !important;
+}
+/* Bootstrap panel fix because that 1px offset bothers the hell out of me */
+.panel-heading {
+  position: relative;
+  width: calc(100% + 2px);
+  left: -1px;
+  top: -1px;
+}
+.panel-primary>.panel-heading+.panel-collapse>.panel-body {
+  border-top: none;
+}
+#editor_form {
+  margin:0;
+}
+.btn-warning {
+  color: white;
+}
+#loading-background {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+  z-index: 998;
+  background-color: rgba(0, 0, 0, 0.6);
+}
+#loading-body {
+  position: fixed;
+  top: 25vh;
+  left: 25vw;
+  width: 50vw;
+  overflow: hidden;
+  z-index: 999;
+  padding: 4vw;
+}
+.spinner-grow {
+  vertical-align: middle;
+}
+.red {
+  color: red;
+  vertical-align: middle;
+}
+.jstree-default .jstree-anchor {
+  font-size: 1.5vw;
+}
+.CodeMirror-scroll * {
+  font-size: 1.2vw;
+}
+.wrapper {
+  max-width: 1200px;
+  margin:auto;
+}
+@media only screen and (min-width: 1201px) {
+  html {
+  font-size: 24px;
+  }
+
+  @include media-breakpoint-up(sm) {
+    html {
+      font-size: 24px;
+    }
+  }
+
+  @include media-breakpoint-up(md) {
+    html {
+      font-size: 28px;
+    }
+  }
+
+  @include media-breakpoint-up(lg) {
+    html {
+      font-size: 32px;
+    }
+  }
+  .panel-title {
+    font-size: 36px;
+  }
+  .thumbnail .caption {
+    font-size: 24px;
+  }
+  .thumbnail, .jstree-default .jstree-anchor {
+    font-size: 18px;
+  }
+  .CodeMirror-scroll * {
+    font-size: 14px;
+  }
+}
