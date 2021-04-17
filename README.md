@@ -9,16 +9,22 @@ This is a 'no database' web GUI built on Nimdy's Dedicated Valheim server script
 - Web page that publicly shows the status of valheimserver.service
 - Has a Copy to clipboard button publicly for easy copypasta
 - Looks at your /BepInEx/config folder and can publicly display mods installed with a link to their Nexus page (some mods may require a CFG edit to display)
-- When logged in, gives you the ability to edit the CFG mod files with an in-browser editor
-- (Incomplete) When logged in, turn off/on the valheimserver.service process from a browser
+### When Logged in
+- Gives you the ability to edit the CFG mod files with an in-browser editor
+- Turn off/on the valheimserver.service process from a browser
+- Download a copy of your .DB and .FWL files
 
 ## Credits
 
 Simple no database login from https://gist.github.com/thagxt/94b976db4c8f14ec1527<br>
 In-browser editor code from https://github.com/pheditor/pheditor
 
+## Screenshots
+
+![alt text](https://imgur.com/Vw43muw)
+
 ## Install instructions
-These instrcutions assume you are working on Ubuntu server.
+These instrcutions assume you are working on Ubuntu server as outlined by Nimdy.
 
 1) Follow Nimdy's instuctions for setting up and configuring your Valheim server ( https://github.com/Nimdy/Dedicated_Valheim_Server_Script#readme )
 
@@ -43,31 +49,48 @@ sudo cp -R ~/Valheim-Server-Web-GUI/www/ /var/
 
 Now when visting the IP of the server you should see the main GUI screen.
 
-4) Change the default username/password/hash keys. Using your preferred text editor open /var/www/html/index.php, you will see the inital section with the variables to change:
+4) Change the default username/password/hash keys. Using your preferred text editor open /var/www/VSW-GUI-CONFIG, you will see the inital section with the variables to change:
 ```
-<?php
-
-session_start();
-// ********** Login Variables ********** //
-
-$username = 'Default_Admin';
-$password = 'ch4n93m3';
-
-$random1 = 'secret_key1';
-$random2 = 'secret_key2';
-
-$hash = md5($random1.$pass.$random2); 
-
-$self = $_SERVER['REQUEST_URI'];
-
-?>
+// *************************************** //
+// *              VARIABLES              * //
+// *************************************** //
+	$username = 'Default_Admin';
+	$password = 'ch4n93m3';
+	$random1 = 'secret_key1';
+	$random2 = 'secret_key2';
+	$hash = md5($random1.$pass.$random2); 
+	$self = $_SERVER['REQUEST_URI'];
+	$cfg_editor = 'false';
 ```
 Change $username and $password to your preffered values. Change $random1 and $random2 to any variables of your choice, like 'Valheim365' and 'OdinRules'.
 
+5) This step requires improvement for security purposes. To execute server commands the PHP user (www-data) needs to be able to run systemctl commands, which by default it can not. Currently you can give www-data root access by editing the sudoer file.
 
-=== Incomplete Directions ===
-sudo chmod -R 777 /home/steam/valheimserver/BepInEx/config<br>
-sudo usermod -a -G steam www-data
+```
+sudo visudo
+```
+This will open your sudo file, add the following line at the bottom:
+
+```
+www-data                ALL=(ALL) NOPASSWD: ALL
+```
+
+The above entry requires revision for security purposes.
+
+Then hit CTRL+X to exit VI, you will be prompted to save, so press Y and then Enter. VI will then ask where to save a .tmp file, just hit Enter again. After you save the .tmp visudo will check the file for errors, if there are none it will push the content to the live file automatically.
+
+
+6) Optional - Enable the CFG Editor. Using your preferred text editor open /var/www/VSW-GUI-CONFIG and toggle the value of $cfg_editor from false to true, as so:
+
+```
+$cfg_editor = 'true';
+```
+
+Make the CFG files editable via the command:
+
+```
+sudo chmod -R 777 /home/steam/valheimserver/BepInEx/config
+```
 
 ## Making Mods Show up on the Public list of Mods
 
