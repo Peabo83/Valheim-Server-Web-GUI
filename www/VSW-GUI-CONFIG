@@ -8,8 +8,9 @@
 	$random2 = 'secret_key2';
 	$hash = md5($random1.$pass.$random2); 
 	$self = $_SERVER['REQUEST_URI'];
-	$show_mods = true;
+	$show_mods = false;
 	$cfg_editor = false;
+	$make_seed_public = false;
 
 	// Manually add nexus mods to displayed mods insert mod IDs comma delineated as such:
 	// $manual_add_displayed_mods = array('4', '189', '387');
@@ -18,3 +19,4 @@
 	// Hits ipecho.net to get the VM's actual IP
     $realIP = file_get_contents("http://ipecho.net/plain");
 ?>
+
