@@ -21,7 +21,11 @@ In-browser editor code from https://github.com/pheditor/pheditor
 
 ## Screenshots
 
-![alt text](https://i.imgur.com/Vw43muw.jpg)
+![alt text](https://i.imgur.com/KG3vhcT.jpg)<br>
+<br>
+![alt text](https://i.imgur.com/42CSa9o.jpg)<br>
+<br>
+![alt text](https://i.imgur.com/6FBXr8L.jpg)<br>
 
 ## Install instructions
 These instrcutions assume you are working on Ubuntu server as outlined by Nimdy.
