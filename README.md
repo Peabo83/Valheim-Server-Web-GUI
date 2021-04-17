@@ -8,16 +8,17 @@ This is a 'no database' web GUI built on Nimdy's Dedicated Valheim server script
 
 - Web page that publicly shows the status of valheimserver.service
 - Has a Copy to clipboard button publicly for easy copypasta
-- Looks at your /BepInEx/config folder and can publicly display mods installed with a link to their Nexus page (some mods may require a CFG edit to display)
+- Looks at your /BepInEx/config folder and can publicly display mods installed with a link to their Nexus page or display a defined list of mods
 ### When Logged in
 - Gives you the ability to edit the CFG mod files with an in-browser editor
-- Turn off/on the valheimserver.service process from a browser
+- Turn off/on the valheimserver.service process
 - Download a copy of your .DB and .FWL files
 
 ## Credits
 
 Simple no database login from https://gist.github.com/thagxt/94b976db4c8f14ec1527<br>
-In-browser editor code from https://github.com/pheditor/pheditor
+In-browser editor code from https://github.com/pheditor/pheditor<br>
+This would not work without https://github.com/Nimdy/Dedicated_Valheim_Server_Script
 
 ## Screenshots
 
