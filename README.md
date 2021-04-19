@@ -21,11 +21,11 @@ This would not work without https://github.com/Nimdy/Dedicated_Valheim_Server_Sc
 
 ## Screenshots
 
-![alt text](https://i.imgur.com/KG3vhcT.jpg)<br>
-<br>
 ![alt text](https://i.imgur.com/sDE7T2x.jpg)<br>
 <br>
 ![alt text](https://i.imgur.com/ELlf5TM.jpg)<br>
+<br>
+![alt text](https://i.imgur.com/6FBXr8L.jpg)<br>
 
 ## Install instructions
 These instrcutions assume you are working on Ubuntu server as outlined by Nimdy.
