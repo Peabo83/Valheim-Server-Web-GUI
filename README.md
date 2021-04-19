@@ -75,7 +75,7 @@ Change $username and $password to your preffered values. Change $random1 and $ra
 ```
 sudo visudo
 ```
-This will open your sudo file, add the following line at the bottom:
+This will open your sudo file, add the following at the bottom:
 
 ```
 # Valheim web server commands
