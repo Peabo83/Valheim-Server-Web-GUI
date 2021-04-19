@@ -1,9 +1,6 @@
 # Valheim-Server-Web-GUI
 
-This is a 'no database' web GUI built on Nimdy's Dedicated Valheim server script ( https://github.com/Nimdy/Dedicated_Valheim_Server_Script )
-
 ## Features
-
 - Web page that publicly shows the status of valheimserver.service
 - Has a public facing Copy to clipboard button for easy pasting into Valheim
 - Looks at your /BepInEx/config folder and can publicly display mods installed with a link to their Nexus page or display a defined list of mods
@@ -14,13 +11,11 @@ This is a 'no database' web GUI built on Nimdy's Dedicated Valheim server script
 - Download a copy of your .DB and .FWL files
 
 ## Credits
-
 Simple no database login from https://gist.github.com/thagxt/94b976db4c8f14ec1527<br>
 In-browser editor code from https://github.com/pheditor/pheditor<br>
 This would not work without https://github.com/Nimdy/Dedicated_Valheim_Server_Script
 
 ## Screenshots
-
 ![alt text](https://i.imgur.com/sDE7T2x.jpg)<br>
 <br>
 ![alt text](https://i.imgur.com/ELlf5TM.jpg)<br>
@@ -88,7 +83,7 @@ www-data ALL = (root) NOPASSWD: /bin/cp -R /home/steam/.config/unity3d/IronGate/
 Then hit <kbd>CTRL</kbd> + <kbd>X</kbd> to exit VI, you will be prompted to save, so press <kbd>Y</kbd> and then <kbd>Enter</kbd>. VI will then ask where to save a .tmp file, just hit <kbd>Enter</kbd> again. After you save the .tmp visudo will check the file for errors, if there are none it will push the content to the live file automatically.
 
 
-6) <u>Optional</u> - Enable the CFG Editor. Using your preferred text editor open /var/www/VSW-GUI-CONFIG and toggle the value of $cfg_editor from false to true, as so:
+6) **Optional** - Enable the CFG Editor. Using your preferred text editor open /var/www/VSW-GUI-CONFIG and toggle the value of $cfg_editor from false to true, as so:
 
 ```
 $cfg_editor = 'true';
