@@ -64,11 +64,13 @@ Now when visting the IP of the server you should see the main GUI screen.
 	$random2 = 'secret_key2';
 	$hash = md5($random1.$pass.$random2); 
 	$self = $_SERVER['REQUEST_URI'];
-	$cfg_editor = 'false';
+	$show_mods = true;
+	$cfg_editor = false;
+	$make_seed_public = false;
 ```
 Change $username and $password to your preffered values. Change $random1 and $random2 to any variables of your choice, like 'Valheim365' and 'OdinRules'.
 
-5) This step requires improvement for security purposes. To execute server commands the PHP user (www-data) needs to be able to run systemctl commands, which by default it can not. Currently you can give www-data root access by editing the sudoer file.
+5) To execute systemctl commands the PHP user (www-data) needs to be able to run systemctl commands, which by default it can not. The following will allow www-data to run the specific commands used to make the GUI work.
 
 ```
 sudo visudo
@@ -76,12 +78,14 @@ sudo visudo
 This will open your sudo file, add the following line at the bottom:
 
 ```
-www-data                ALL=(ALL) NOPASSWD: ALL
+# Valheim web server commands
+www-data ALL = (root) NOPASSWD: /bin/systemctl restart valheimserver.service
+www-data ALL = (root) NOPASSWD: /bin/systemctl start valheimserver.service
+www-data ALL = (root) NOPASSWD: /bin/systemctl stop valheimserver.service
+www-data ALL = (root) NOPASSWD: /bin/cp -R /home/steam/.config/unity3d/IronGate/Valheim/worlds/* /var/www/html/download/
 ```
 
-The above entry requires revision for security purposes.
-
-Then hit CTRL+X to exit VI, you will be prompted to save, so press Y and then Enter. VI will then ask where to save a .tmp file, just hit Enter again. After you save the .tmp visudo will check the file for errors, if there are none it will push the content to the live file automatically.
+Then hit <kbd>CTRL</kbd> + <kbd>X</kbd> to exit VI, you will be prompted to save, so press <kbd>Y</kbd> and then <kbd>Enter</kbd>. VI will then ask where to save a .tmp file, just hit <kbd>Enter</kbd> again. After you save the .tmp visudo will check the file for errors, if there are none it will push the content to the live file automatically.
 
 
 6) Optional - Enable the CFG Editor. Using your preferred text editor open /var/www/VSW-GUI-CONFIG and toggle the value of $cfg_editor from false to true, as so:
@@ -123,3 +127,6 @@ Using your preferred text editor open /var/www/VSW-GUI-CONFIG, you will see the 
 $manual_add_displayed_mods = array();
 ```
 The inline comments describe how to manually add a displayed Nexus mod, simply add the NexusID value in array() as shown in the example.
+
+## To-do
+Add additional error checking on systemctl commands
