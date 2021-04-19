@@ -88,16 +88,25 @@ www-data ALL = (root) NOPASSWD: /bin/cp -R /home/steam/.config/unity3d/IronGate/
 Then hit <kbd>CTRL</kbd> + <kbd>X</kbd> to exit VI, you will be prompted to save, so press <kbd>Y</kbd> and then <kbd>Enter</kbd>. VI will then ask where to save a .tmp file, just hit <kbd>Enter</kbd> again. After you save the .tmp visudo will check the file for errors, if there are none it will push the content to the live file automatically.
 
 
-6) Optional - Enable the CFG Editor. Using your preferred text editor open /var/www/VSW-GUI-CONFIG and toggle the value of $cfg_editor from false to true, as so:
+6) <u>Optional</u> - Enable the CFG Editor. Using your preferred text editor open /var/www/VSW-GUI-CONFIG and toggle the value of $cfg_editor from false to true, as so:
 
 ```
 $cfg_editor = 'true';
 ```
 
-Make the CFG files editable via the command:
-
+VIA a terminal window, set the default of new files (and existing files) so they have RWX permissions on the group.
 ```
-sudo chmod -R 777 /home/steam/valheimserver/BepInEx/config
+sudo setfacl -R -m g::rwx /home/steam/valheimserver/BepInEx/config
+```
+
+Then add www-data to the steam group.
+```
+sudo usermod -a -G steam www-data
+```
+
+Now reboot the server to ensure these new settings are in effect.
+```
+sudo reboot now
 ```
 
 ## Making Mods Show up on the Public list of Mods
