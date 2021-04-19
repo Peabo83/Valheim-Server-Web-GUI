@@ -94,9 +94,16 @@ Then hit <kbd>CTRL</kbd> + <kbd>X</kbd> to exit VI, you will be prompted to save
 $cfg_editor = 'true';
 ```
 
-VIA a terminal window, set the default of new files (and existing files) so they have RWX permissions on the group.
+VIA a terminal window set new permissions on the BepInEx/config folder and the the files in it.
 ```
-sudo setfacl -R -m g::rwx /home/steam/valheimserver/BepInEx/config
+sudo chmod -R 664 /home/steam/valheimserver/BepInEx/config/
+sudo chmod 755 /home/steam/valheimserver/BepInEx/config/
+```
+
+Set the default of new files in the folder to the correct permissions.
+```
+sudo chmod g+s /home/steam/valheimserver/BepInEx/config/
+sudo setfacl -d -m g::rwx /home/steam/valheimserver/BepInEx/config/
 ```
 
 Then add www-data to the steam group.
@@ -108,6 +115,8 @@ Now reboot the server to ensure these new settings are in effect.
 ```
 sudo reboot now
 ```
+
+Once the reboot is complete reload your browser and (when logged in) you will see a new tab named Mod CFG Editor that can be used to edit your CFG files.  
 
 ## Making Mods Show up on the Public list of Mods
 
