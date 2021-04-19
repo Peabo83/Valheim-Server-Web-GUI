@@ -111,6 +111,13 @@ sudo reboot now
 
 ## Making Mods Show up on the Public list of Mods
 
+### Find a mods nexusID
+A mod's nexusID appears in the URL of the mod, for example the URL for ValheimPlus is: https://www.nexusmods.com/valheim/mods/4 - That number at the end is the ID, so in the case of ValheimPlus the nexusID is 4. To have this mod display in the list you would add the following to valheim_plus.cfg:
+
+```
+NexusID = 4
+```
+
 ### Add NexusID to the CFG File
 Some mods will work automatically, but some will not. If you have a mod installed and it's not displaying you will need to add the mods nexus ID to it's CFG file like this:
 
@@ -120,14 +127,8 @@ NexusID = ###
 
 Please note that this formatting must be exact, including the spaces around the equals sign.
 
-### Find a mods nexusID
-A mod's nexusID appears in the URL of the mod, for example the URL for ValheimPlus is: https://www.nexusmods.com/valheim/mods/4 - That number at the end is the ID, so in the case of ValheimPlus the nexusID is 4. To have this mod display in the list you would add the following to valheim_plus.cfg:
 
-```
-NexusID = 4
-```
-
-### Add NexusID to /var/www/VSW-GUI-CONFIG
+### Manually add mods to the displayed list
 Using your preferred text editor open /var/www/VSW-GUI-CONFIG, you will see the following option:
 
 ```
