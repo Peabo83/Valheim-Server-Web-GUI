@@ -1,141 +1,150 @@
 <?php
 
+// Get the config file
 require '/var/www/VSW-GUI-CONFIG';
 
-$mod_file_count = new FilesystemIterator("/home/steam/valheimserver/BepInEx/config", FilesystemIterator::SKIP_DOTS);
+// Check to make sure the config file exists, or set the editor to false
+if (file_exists('/home/steam/valheimserver/BepInEx/config')) {
+  $mod_file_count = new FilesystemIterator("/home/steam/valheimserver/BepInEx/config", FilesystemIterator::SKIP_DOTS);
+} else {
+  $cfg_editor = false;
+}
 
+// If everything needed to edit CFGs is in order, get the needed php script
 if ($mod_file_count > 0 && $cfg_editor == true) {
   require 'pheditor.php';
 }
 
-if (isset($_GET['start'])) {
-  $info = exec('sudo systemctl start valheimserver.service');
-  header("Location: $_SERVER[PHP_SELF]");
-  exit;
-}
-if (isset($_GET['stop'])) {
-  $info = exec('sudo systemctl stop valheimserver.service');
-  header("Location: $_SERVER[PHP_SELF]");
-  exit;
-}
-if (isset($_GET['restart'])) {
-  $info = exec('sudo systemctl restart valheimserver.service');
-  header("Location: $_SERVER[PHP_SELF]");
-  exit;
-}
-if (isset($_GET['seed'])) {
-  $command = exec('sudo cp -R /home/steam/.config/unity3d/IronGate/Valheim/worlds/* /var/www/html/download/');
-  header("Location: $_SERVER[PHP_SELF]");
-  exit;
+// Verify user then check $_GET values for issued server commands
+if (isset($_SESSION['login']) && $_SESSION['login'] == $hash) {
+  if (isset($_GET['start'])) {
+    $info = exec('sudo systemctl start valheimserver.service');
+    header("Location: $_SERVER[PHP_SELF]");
+    exit;
+  }
+  if (isset($_GET['stop'])) {
+    $info = exec('sudo systemctl stop valheimserver.service');
+    header("Location: $_SERVER[PHP_SELF]");
+    exit;
+  }
+  if (isset($_GET['restart'])) {
+    $info = exec('sudo systemctl restart valheimserver.service');
+    header("Location: $_SERVER[PHP_SELF]");
+    exit;
+  }
+  if (isset($_GET['seed'])) {
+    $command = exec('sudo cp -R /home/steam/.config/unity3d/IronGate/Valheim/worlds/* /var/www/html/download/');
+    header("Location: $_SERVER[PHP_SELF]");
+    exit;
+  }
+  if (isset($_GET['download_db'])) {
+    $command = exec('sudo cp -R /home/steam/.config/unity3d/IronGate/Valheim/worlds/* /var/www/html/download/');
+    $dir    = '/var/www/html/download/';
+    $files = scandir($dir);
+    foreach ($files as $key => $value) {
+      $ext  = (new SplFileInfo($value))->getExtension();
+      if ($ext == 'db' ) {
+        header('location: /download/'.$value);
+        exit;
+      }
+    }
+    trigger_error('No .db file found, check permissions and try again.');
+    exit;
+  }
+  if (isset($_GET['download_fwl'])) {
+    $command = exec('sudo cp -R /home/steam/.config/unity3d/IronGate/Valheim/worlds/* /var/www/html/download/');
+    $dir    = '/var/www/html/download/';
+    $files = scandir($dir);
+    foreach ($files as $key => $value) {
+      $ext  = (new SplFileInfo($value))->getExtension();
+      if ($ext == 'fwl' ) {
+        header('location: /download/'.$value);
+        exit;
+      }
+    }
+    trigger_error('No .db file found, check permissions and try again.');
+    exit;
+  }
 }
 
-          // Get the status of valheimserver.service
-          $info = shell_exec('systemctl status --no-pager -l valheimserver.service');
-          $plugin_config_files = shell_exec("ls /home/steam/valheimserver/BepInEx/config/");
+// Get the status of valheimserver.service
+$info = shell_exec('systemctl status --no-pager -l valheimserver.service');
+$plugin_config_files = shell_exec("ls /home/steam/valheimserver/BepInEx/config/");
 
-          // Pull all the values of of the output of $info
-          $startup_line = strstr($info, '-name');    
-          $name = str_replace("-name ", "", substr($startup_line, 0, strpos($startup_line, "-port")));
-          $port = strstr($info, '-port');
-          $port = str_replace("-port ", "", substr($port, 0, strpos($port, "-world")));
-          $world = strstr($info, '-world');
-          $world = str_replace("-world ", "", substr($world, 0, strpos($world, "-password")));
-          $world = str_replace(" ", "", $world);
-          $world_perm = $world;
-          $public = strstr($info, '-public');
-          $public = str_replace("-public ", "", $public);
-          switch ($public) {
-            case 0:
-              $public_status = "Not Public";
-              $public_class = "warning";
-              break;
-            case 1:
-              $public_status = "Public";
-              $public_class = "success";
-            default:
-              $public_status = "Error fetching data";
-              $public_class = "danger";
-              break;
-          };
-          $active = strstr($info, 'Active:');
-          $active = str_replace("Active: ", "", substr($active, 0, strpos($active, ";")));
-          $needle = "(dead)";
-          $pos = strpos($info, $needle);
-          if ($pos > 0) {
-            $alert_class = "danger";
-            $world = "<span class='glyphicon glyphicon-remove red'></span>";
-            $port = "<span class='glyphicon glyphicon-remove red'></span>";
-            $public = "NONE";
-            $name = "Valheim Service Not Running";
-            $public_status = "<span class='glyphicon glyphicon-remove red'></span>";
-            $public_class = "danger";
-            $public_attr = "disabled";
-            $no_download = '';
-            $no_download_class = 'success';
-            $url_copy = 'hidden';
-            $start_attr = '';
-          } else {
-            $alert_class = "success";
-            $public_attr = "";
-            $no_download = "disabled data-toggle=\"tooltip\" data-placement=\"top\" title=\"Must Stop Server to Download\"";
-            $no_download_class = "danger";
-            $url_copy = '';
-            $start_attr = 'disabled';
-          }
+// Pull all the values out of $info into more useful variables
+$startup_line = strstr($info, '-name');    
+$name = str_replace("-name ", "", substr($startup_line, 0, strpos($startup_line, "-port")));
+$port = strstr($info, '-port');
+$port = str_replace("-port ", "", substr($port, 0, strpos($port, "-world")));
+$world = strstr($info, '-world');
+$world = str_replace("-world ", "", substr($world, 0, strpos($world, "-password")));
+$world = str_replace(" ", "", $world);
+$world_perm = $world;
+$public = strstr($info, '-public');
+$public = str_replace("-public ", "", $public);
+switch ($public) {
+  case 0:
+    $public_status = "Not Public";
+    $public_class = "warning";
+    break;
+  case 1:
+    $public_status = "Public";
+    $public_class = "success";
+  default:
+    $public_status = "Error fetching data";
+    $public_class = "danger";
+    break;
+};
+$active = strstr($info, 'Active:');
+$active = str_replace("Active: ", "", substr($active, 0, strpos($active, ";")));
+$needle = "(dead)";
+$pos = strpos($info, $needle);
+if ($pos > 0) {
+  $alert_class = "danger";
+  $world = "<span class='glyphicon glyphicon-remove red'></span>";
+  $port = "<span class='glyphicon glyphicon-remove red'></span>";
+  $public = "NONE";
+  $name = "Valheim Service Not Running";
+  $public_status = "<span class='glyphicon glyphicon-remove red'></span>";
+  $public_class = "danger";
+  $public_attr = "disabled";
+  $no_download = '';
+  $no_download_class = 'success';
+  $url_copy = 'hidden';
+  $start_attr = '';
+} else {
+  $alert_class = "success";
+  $public_attr = "";
+  $no_download = "disabled data-toggle=\"tooltip\" data-placement=\"top\" title=\"Must Stop Server to Download\"";
+  $no_download_class = "danger";
+  $url_copy = '';
+  $start_attr = 'disabled';
+}
 
-          if (file_exists("/var/www/html/download/".$world.".fwl")) {
-            $raw_fwl = shell_exec("hexdump -C /var/www/html/download/".$world.".fwl");
-            $tempy = preg_match_all("/\|(.*)\|/siU", $raw_fwl, $hexdata_matches);
-            $seed = $hexdata_matches[0][0] . $hexdata_matches[0][1];
-            $seed = str_replace('.', ' ', $seed);
-            $seed = str_replace('|', '', $seed);
-            $seed_array = explode(' ', $seed);
-            foreach ($seed_array as $key => $value) {
-              if (!empty($value)) {
-                $seed_output_array[] = $value;
-              }
-            }
-            $seed = $seed_output_array[2];
-            $has_seed = true;
-            if ($make_seed_public == true) {
-              $text_row = '7';
-            } else {
-              $text_row = '8';
-            }
-          } else {
-            $seed = "<button class=\"btn btn-xs btn-success\" onclick=\"location.href='index.php?seed=true';\">Get Seed</button>";
-            $has_seed = false;
-            $text_row = '8';
-          }
-
-if (isset($_GET['download_db'])) {
-  $command = exec('sudo cp -R /home/steam/.config/unity3d/IronGate/Valheim/worlds/* /var/www/html/download/');
-  $dir    = '/var/www/html/download/';
-  $files = scandir($dir);
-  foreach ($files as $key => $value) {
-    $ext  = (new SplFileInfo($value))->getExtension();
-    if ($ext == 'db' ) {
-      header('location: /download/'.$value);
-      exit;
+// If the FWL has been copied to /download run it through a hexdump and then clean the ASCII output to something legible
+if (file_exists("/var/www/html/download/".$world.".fwl")) {
+  $raw_fwl = shell_exec("hexdump -C /var/www/html/download/".$world.".fwl");
+  $tempy = preg_match_all("/\|(.*)\|/siU", $raw_fwl, $hexdata_matches);
+  $seed = $hexdata_matches[0][0] . $hexdata_matches[0][1];
+  $seed = str_replace('.', ' ', $seed);
+  $seed = str_replace('|', '', $seed);
+  $seed_array = explode(' ', $seed);
+  foreach ($seed_array as $key => $value) {
+    if (!empty($value)) {
+      $seed_output_array[] = $value;
     }
   }
-  trigger_error('No .db file found, check permissions and try again.');
-  exit;
-}
-
-if (isset($_GET['download_fwl'])) {
-  $command = exec('sudo cp -R /home/steam/.config/unity3d/IronGate/Valheim/worlds/* /var/www/html/download/');
-  $dir    = '/var/www/html/download/';
-  $files = scandir($dir);
-  foreach ($files as $key => $value) {
-    $ext  = (new SplFileInfo($value))->getExtension();
-    if ($ext == 'fwl' ) {
-      header('location: /download/'.$value);
-      exit;
-    }
+  $seed = $seed_output_array[2];
+  $has_seed = true;
+  if ($make_seed_public == true) {
+    $text_row = '7';
+  } else {
+    $text_row = '8';
   }
-  trigger_error('No .db file found, check permissions and try again.');
-  exit;
+} else {
+  $seed = "<button class=\"btn btn-xs btn-success\" onclick=\"location.href='index.php?seed=true';\">Get Seed</button>";
+  $has_seed = false;
+  $text_row = '8';
 }
 
 session_start();
@@ -938,7 +947,7 @@ if(isset($_GET['logout'])) {
                 <?php
                 if ($make_seed_public == true && $has_seed == true ) { ?>
                 <div class="col-1">
-                  <button class="btn btn-success view-world" onclick="window.open('http://valheim-map.world/?seed=<?php echo $seed; ?>&offset=506%2C778&zoom=0.077&view=0&ver=0.148.6')"><span class="glyphicon glyphicon-globe"></span></button>
+                  <button class="btn btn-success view-world" onclick="window.open('https://valheim-map.world/?seed=<?php echo $seed; ?>&offset=506%2C778&zoom=0.077&view=0&ver=0.148.6')"><span class="glyphicon glyphicon-globe"></span></button>
                 </div>
                 <?php } ?>
               </div>
@@ -1041,12 +1050,9 @@ if(isset($_GET['logout'])) {
           </div>
         </div>
       </div>
-
       <?php
       if ($mod_file_count > 0 && $cfg_editor == true) {
       ?>
-
-
       <div class="panel panel-primary">
         <div class="panel-heading" role="tab" id="headingThree">
           <h4 class="panel-title">
@@ -1072,14 +1078,12 @@ if(isset($_GET['logout'])) {
                 </div>
               </div>
             </div>
-
             <div class="row px-3">
               <div class="col-lg-3 col-md-3 col-sm-12 col-12">
                 <div id="files" class="card">
                   <div class="card-block"><?= files(MAIN_DIR) ?></div>
                 </div>
               </div>
-
               <div class="col-lg-9 col-md-9 col-sm-12 col-12">
                 <div class="card">
                   <div class="card-block">
@@ -1097,13 +1101,10 @@ if(isset($_GET['logout'])) {
                 </div>
               </div>
             </div>
-
           </div>
-
           <form method="post" id="editor_form">
             <input name="action" type="hidden" value="upload-file">
             <input name="destination" type="hidden" value="">
-
             <div class="modal" id="uploadFileModal">
               <div class="modal-dialog">
                 <div class="modal-content">
@@ -1116,18 +1117,14 @@ if(isset($_GET['logout'])) {
                       <input name="uploadfile[]" type="file" value="" multiple>
                     </div>
                     <?php
-
                     if (function_exists('ini_get')) {
                       $sizes = [
                         ini_get('post_max_size'),
                         ini_get('upload_max_filesize')
                       ];
-
                       $max_size = max($sizes);
-
                       echo '<small class="text-muted">Maximum file size: ' . $max_size . '</small>';
                     }
-
                     ?>
                   </div>
                   <div class="modal-footer">
@@ -1155,16 +1152,14 @@ if(isset($_GET['logout'])) {
       }
   // ********** Login Form  ********** //
   else {
-    echo '</div></div></div>';
     display_login_form();
   }
-
   function display_login_form() { ?>
     <form action="<?php echo $self; ?>" method='post'>
     <div class="row login">
           <div class="col-5"><input type="text" name="username" id="username" class="form-control"></div>
           <div class="col-5"><input type="password" name="password" id="password" class="form-control"></div>
-          <div class="col-2"><input class="btn btn-success" type="submit" name="submit" value="submit"></div>
+          <div class="col-2"><input class="btn btn-success" type="submit" name="submit" value="submit" style="width: 100%;"></div>
           <div style="display: none;">
           <textarea id="editor" data-file="" class="form-control"></textarea>
           <input id="digest" type="hidden" readonly>
