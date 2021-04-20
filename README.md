@@ -143,5 +143,5 @@ $manual_add_displayed_mods = array();
 The inline comments describe how to manually add a displayed Nexus mod, simply add the NexusID value in array() as shown in the example.
 
 ## To-do
-Add additional error checking on systemctl commands
-Add log output to server section
+Add additional error checking on systemctl commands<br>
+Add log output to server section w/ live update via jquery
