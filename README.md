@@ -145,3 +145,4 @@ The inline comments describe how to manually add a displayed Nexus mod, simply a
 ## To-do
 Add additional error checking on systemctl commands<br>
 Add log output to server section w/ live update via jquery
+Set Valheim Admins via a new panel
