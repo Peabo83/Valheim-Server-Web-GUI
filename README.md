@@ -1,4 +1,4 @@
-# Valheim-Server-Web-GUI
+# Valheim-Server-Web-GUI (V1.01)
 
 ## Features
 - Web page that publicly shows the status of valheimserver.service
