@@ -2,24 +2,25 @@
 // *************************************** //
 // *              VARIABLES              * //
 // *************************************** //
+	$version = '1.01';
 	$username = 'Default_Admin';
 	$password = 'ch4n93m3';
 	$random1 = 'secret_key1';
 	$random2 = 'secret_key2';
 	$hash = md5($random1.$pass.$random2); 
 	$self = $_SERVER['REQUEST_URI'];
-	$show_mods = true;
-	$cfg_editor = true;
-	$make_seed_public = true;
+	$show_mods = false;
+	$cfg_editor = false;
+	$make_seed_public = false;
 
 	// Manually add nexus mods to displayed mods insert mod IDs comma delineated as such:
 	// $manual_add_displayed_mods = array('4', '189', '387');
 	$manual_add_displayed_mods = array();
 
 	// Hits ipecho.net to get the VM's actual IP
-    $realIP = file_get_contents("http://ipecho.net/plain");
+    	$realIP = file_get_contents("http://ipecho.net/plain");
 
-    // The following are BETA functions that require additional configuration for operation, see BETA section at https://raw.githubusercontent.com/Peabo83/Valheim-Server-Web-GUI/main/README.md
-    $server_log = false;
-    $admins_and_bans = false;
+	// The following are BETA functions that require additional configuration for operation, see BETA section at https://raw.githubusercontent.com/Peabo83/Valheim-Server-Web-GUI/main/README.md
+	$server_log = false;
+	$admins_and_bans = false;
 ?>
