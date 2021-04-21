@@ -13,7 +13,7 @@
 - View a system log
 - Panel for adding/removing players from the admin and ban list
 
-**This GUI works/looks best in Chrome, ironing out non-Chrome errors is on the to-do list
+**This GUI works/looks best in Chrome, ironing out non-Chrome errors is on the to-do list**
 
 ## Credits
 Simple no database login from https://gist.github.com/thagxt/94b976db4c8f14ec1527<br>
