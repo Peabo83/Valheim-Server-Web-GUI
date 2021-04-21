@@ -111,7 +111,8 @@ html {
 #copyButton {
   position: absolute;
   height: 100%;
-  min-width: 5vw;
+  width: fit-content;
+  min-width: 3.2vw;
 }
 #copyTarget {
   padding-left: 6.5vw;
@@ -128,6 +129,9 @@ html {
 }
 .thumbnail .caption {
   font-size: 2vw;
+}
+.login {
+  margin-top: .5vw;
 }
 .login input.button {
   height: 100%;
@@ -194,6 +198,28 @@ html {
   line-height: 1.5;
   border-radius: .2rem;
 }
+#serverlogs .panel-title {
+  font-size: 60%;
+}
+#accordion2 {
+  margin-top: .5vw;
+}
+#serverlogbody .panel-body {
+  font-size: 1vw;
+  padding-top: 0;
+}
+#collapseFour .thumbnail .row div a {
+  display: block;
+  margin-top:.1vw;
+}
+#collapseFour .thumbnail .row:nth-child(even) {
+  background: #ebebeb;
+}
+.AnB_item {
+  margin-left:0;
+  margin-right:0;
+  margin-bottom:.5vw;
+}
 @media only screen and (min-width: 1201px) {
   html {
   font-size: 24px;
@@ -230,5 +256,11 @@ html {
   }
   #copyTarget {
     padding-left: 104px;
+  }
+  #copyButton {
+  min-width: unset;
+  }
+  #serverlogbody .panel-body {
+  font-size: 12px;
   }
 }
