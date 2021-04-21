@@ -142,8 +142,49 @@ $manual_add_displayed_mods = array();
 ```
 The inline comments describe how to manually add a displayed Nexus mod, simply add the NexusID value in array() as shown in the example.
 
+## Beta Features
+### Server Log
+Using your preferred text editor open /var/www/VSW-GUI-CONFIG, you will see the following option:
+
+```
+$server_log = false;
+```
+
+Change this setting to true and then (here comes the beta part) add one additional line to your sudoers file.
+
+```
+sudo visudo
+```
+
+at the bottom add the following line:
+```
+www-data                ALL=(ALL) NOPASSWD: ALL
+```
+Now when you are logged into the GUI under your server tab you will see 'server log' expandable tab.
+
+![alt text](https://i.imgur.com/lmwznWC.jpg)<br>
+
+### Admin and Ban Panel
+Using your preferred text editor open /var/www/VSW-GUI-CONFIG, you will see the following option:
+
+```
+$server_log = false;
+```
+
+Change this setting to true and then (here comes the beta part) add one additional line to your sudoers file.
+
+```
+sudo visudo
+```
+
+at the bottom add the following line (**This only needs to be added once**):
+```
+www-data                ALL=(ALL) NOPASSWD: ALL
+```
+Now when you are logged into the GUI you will see a new tab called Admins & Bans where you can set users to admins or ban them.
+![alt text](https://i.imgur.com/srDsHSN.jpg)<br>
+
 ## To-do
 Add additional error checking on systemctl commands<br>
 Add log output to server section w/ live update via jquery<br>
-Set Valheim Admins via a new panel<br>
 Upload .zip to be uncompressed and imported to /BepInEx/plugins<br>
