@@ -1,3 +1,1 @@
-<?php
-$version_control = "1.01";
-?>
+1.01
