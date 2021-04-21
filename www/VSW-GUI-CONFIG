@@ -20,6 +20,6 @@
     $realIP = file_get_contents("http://ipecho.net/plain");
 
     // The following are BETA functions that require additional configuration for operation, see BETA section at https://raw.githubusercontent.com/Peabo83/Valheim-Server-Web-GUI/main/README.md
-    $server_log = true;
-    $admins_and_bans = true;
+    $server_log = false;
+    $admins_and_bans = false;
 ?>
