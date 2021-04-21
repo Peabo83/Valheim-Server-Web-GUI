@@ -65,6 +65,30 @@ if (isset($_SESSION['login']) && $_SESSION['login'] == $hash) {
     trigger_error('No .db file found, check permissions and try again.');
     exit;
   }
+  if (isset($_GET['add_admin'])) {
+    $full_command = "sudo echo '".$_GET['add_admin']."' | sudo tee -a /home/steam/.config/unity3d/IronGate/Valheim/adminlist.txt";
+    $command = exec($full_command);
+    header("Location: $_SERVER[PHP_SELF]?AnB=true");
+    exit;
+  }
+  if (isset($_GET['remove_admin'])) {
+    $full_command = "sudo sed -i '/^".$_GET['remove_admin']."/d' /home/steam/.config/unity3d/IronGate/Valheim/adminlist.txt";
+    $command = exec($full_command);
+    header("Location: $_SERVER[PHP_SELF]?AnB=true");
+    exit;
+  }
+  if (isset($_GET['add_ban'])) {
+    $full_command = "sudo echo '".$_GET['add_ban']."' | sudo tee -a /home/steam/.config/unity3d/IronGate/Valheim/bannedlist.txt";
+    $command = exec($full_command);
+    header("Location: $_SERVER[PHP_SELF]?AnB=true");
+    exit;
+  }
+  if (isset($_GET['remove_ban'])) {
+    $full_command = "sudo sed -i '/^".$_GET['remove_ban']."/d' /home/steam/.config/unity3d/IronGate/Valheim/bannedlist.txt";
+    $command = exec($full_command);
+    header("Location: $_SERVER[PHP_SELF]?AnB=true");
+    exit;
+  }
 }
 
 // Get the status of valheimserver.service
@@ -956,7 +980,7 @@ if(isset($_GET['logout'])) {
         ?>
           <div class="row">
             <div class="col-12">
-              <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
+              <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="false">
                 <div class="panel panel-primary">
                   <div class="panel-heading" role="tab" id="headingOne">
                     <h4 class="panel-title">
@@ -1047,10 +1071,144 @@ if(isset($_GET['logout'])) {
             <button class="btn btn-warning server-function" onclick="location.href='index.php?restart=true';" <?php echo $public_attr;?>>Restart</button> 
             <button class="btn btn-<?php echo $no_download_class;?>" <?php echo $no_download; ?> onclick="location.href='index.php?download_db=true';">Download DB</button> 
             <button class="btn btn-<?php echo $no_download_class;?>" onclick="location.href='index.php?download_fwl=true';" <?php echo $no_download; ?>>Download FWL</button> <a class="btn btn-primary" href="?logout=true">Logout</a>
+            <?php if ($server_log == true) { ?>
+              <div class="panel-group" id="accordion2" role="serverlog" aria-multiselectable="true">
+                <div class="panel panel-default">
+                  <div class="panel-heading" role="tab" id="serverlogs">
+                    <h4 class="panel-title">
+                      <a role="button" data-toggle="collapse" data-parent="#accordion2" href="#serverlogbody" aria-expanded="false" aria-controls="serverlogbody" class="">
+                        Server Logs
+                      </a>
+                    </h4>
+                  </div>
+                  <div id="serverlogbody" class="panel-collapse collapse" role="logpanel" aria-labelledby="serverlogs">
+                    <div class="panel-body">
+                      <?php
+                        $log = shell_exec('sudo grep "Got connection SteamID\|Closing socket\|has wrong password\|Got character ZDOID from\|World saved" /var/log/syslog');
+                        $log = str_replace('Apr', '<br>Apr', $log);
+                        echo $log;
+                      ?>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            <?php } ?>
           </div>
         </div>
       </div>
-      <?php
+      <?php if ($server_log == true) { ?>
+      <div class="panel panel-primary">
+        <div class="panel-heading" role="tab" id="headingFour">
+          <h4 class="panel-title">
+            <a class="collapsed" role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseFour" aria-expanded="false" aria-controls="collapseFour">
+              Admins & Bans
+            </a>
+          </h4>
+        </div>
+        <div id="collapseFour" class="panel-collapse <?php echo $server_accordion;?>" role="tabpanel" aria-labelledby="headingFour">
+          <div class="panel-body">
+                <?php if (isset($_GET['AnB'])) {?>
+                  <div class="row">
+                    <div class="col-12">
+                      <div class="alert alert-danger" role="alert">
+                        <span class="glyphicon glyphicon-alert"></span> Server restart needed for changes to take effect. (or maybe not?)
+                      </div>
+                    </div>
+                  </div>
+                <?php }?>
+            <div class="row">
+              <div class="col-md-4">
+                <div class="thumbnail">
+                  <div class="row">
+                    <div class="col-md-8">
+                      Recent Players
+                    </div>
+                    <div class="col-md-4">
+                      add to:
+                    </div>
+                  </div>
+                  <?php
+                    $recent_players = shell_exec('sudo grep handshake /var/log/syslog');
+                    $recent_players = nl2br($recent_players);
+                    $recent_players_array = explode('<br />', $recent_players);
+                    //print_r($recent_players_array);
+                    $already_shown = array();
+                    foreach ($recent_players_array as $key => $value) {
+
+                      $steam_long_id = substr($value, strpos($value, "client") + 6);
+                      $steam_long_id = str_replace(' ', '', $steam_long_id);
+                      if (!in_array($steam_long_id, $already_shown) && !empty($steam_long_id && $steam_long_id != "") ) {
+                        echo "<div class='row AnB_item'>
+                                <div class='col-md-8'>
+                                  <a target=_blank href='https://steamidfinder.com/lookup/" . $steam_long_id . "'>" . $steam_long_id . "</a>
+                                </div>
+                                <div class='col-md-2'>
+                                  <button class='btn btn-success btn-xs' onclick=\"location.href='index.php?add_admin=".$steam_long_id."';\" >Admin</button>
+                                </div>
+                                <div class='col-md-2'>
+                                  <button class='btn btn-danger btn-xs' onclick=\"location.href='index.php?add_ban=".$steam_long_id."';\">Ban</button>
+                                </div>
+                              </div>";
+                        $already_shown[] = $steam_long_id;
+                      }
+                    }
+
+
+                  ?>
+                </div>
+              </div>
+              <div class="col-md-4">
+                <div class="thumbnail">
+                  <?php
+                  // Location of adminlist.txt
+                  $file = fopen("/home/steam/.config/unity3d/IronGate/Valheim/adminlist.txt", "r");
+                  //Output lines until EOF reached
+                  while(! feof($file)) {
+                      $line = fgets($file);
+                      $line = str_replace("// List admin players ID  ONE per line", "Admins", $line);
+                      if (strpos($line, 'Admins') !== false) {
+                        echo "<div class='row'><div class='col-md-12'>" .$line . "</div></div>";
+                      } else {
+                        $clean_line = strtok($line, "\n");
+                        if (!empty($line) && $clean_line != "" ) {
+                          echo "<div class='row AnB_item'><div class='col-md-10'><a target=_blank href='https://steamidfinder.com/lookup/" . $line . "'>".$line."</a></div><div class='col-md-2'><button class='btn btn-danger btn-xs' onclick=\"location.href='index.php?remove_admin=".$clean_line."'\" ><span class='glyphicon glyphicon-trash'></span></button></div></div>";
+                        }
+                      }
+                  }
+                  fclose($file);
+                  ?>
+                </div>
+              </div>
+              <div class="col-md-4">
+                <div class="thumbnail">
+                  <?php
+                  // Location of banlist.txt
+                  $file = fopen("/home/steam/.config/unity3d/IronGate/Valheim/bannedlist.txt", "r");
+                  //Output lines until EOF reached
+                  while(! feof($file)) {
+                      $line = fgets($file);
+                      $line = str_replace("// List banned players ID  ONE per line", "Bans", $line);
+                      if (strpos($line, 'Bans') !== false) {
+                        echo "<div class='row'><div class='col-md-12'>" .$line . "</div></div>";
+                      } else {
+                        $clean_line = strtok($line, "\n");
+                        if (!empty($line) && $clean_line != "" ) {
+                          echo "<div class='row AnB_item'><div class='col-md-10'><a target=_blank href='https://steamidfinder.com/lookup/" . $clean_line . "'>".$clean_line."</a></div><div class='col-md-2'><button class='btn btn-danger btn-xs' onclick=\"location.href='index.php?remove_ban=".$clean_line."'\" ><span class='glyphicon glyphicon-trash'></span></button></div></div>";
+                        }
+                      }
+                  }
+                  fclose($file);
+                  ?>
+                </div>
+              </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <?php 
+      // End Admins & Bans Panel
+      }
+      // Start MOD CFG Editor
       if ($mod_file_count > 0 && $cfg_editor == true) {
       ?>
       <div class="panel panel-primary">
