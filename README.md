@@ -9,6 +9,11 @@
 - Gives you the ability to edit the CFG mod files with an in-browser editor
 - Turn off/on the valheimserver.service process
 - Download a copy of your .DB and .FWL files
+### Beta Features (See Beta section below for enabling)
+- View a system log
+- Panel for adding/removing players from the admin and ban list
+
+**This GUI works/looks best in Chrome, ironing out non-Chrome errors is on the to-do list
 
 ## Credits
 Simple no database login from https://gist.github.com/thagxt/94b976db4c8f14ec1527<br>
@@ -188,3 +193,4 @@ Now when you are logged into the GUI you will see a new tab called Admins & Bans
 Add additional error checking on systemctl commands<br>
 Add log output to server section w/ live update via jquery<br>
 Upload .zip to be uncompressed and imported to /BepInEx/plugins<br>
+Do a compatiblity pass on non-chrome browsers<br>
