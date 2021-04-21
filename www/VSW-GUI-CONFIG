@@ -9,7 +9,7 @@
 	$random2 = 'secret_key2';
 	$hash = md5($random1.$pass.$random2); 
 	$self = $_SERVER['REQUEST_URI'];
-	$show_mods = false;
+	$show_mods = true;
 	$cfg_editor = false;
 	$make_seed_public = false;
 
