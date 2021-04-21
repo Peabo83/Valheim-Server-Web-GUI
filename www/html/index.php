@@ -15,6 +15,8 @@ if ($mod_file_count > 0 && $cfg_editor == true) {
   require 'pheditor.php';
 }
 
+session_start();
+
 // Verify user then check $_GET values for issued server commands
 if (isset($_SESSION['login']) && $_SESSION['login'] == $hash) {
   if (isset($_GET['start'])) {
@@ -66,28 +68,44 @@ if (isset($_SESSION['login']) && $_SESSION['login'] == $hash) {
     exit;
   }
   if (isset($_GET['add_admin'])) {
-    $full_command = "sudo echo '".$_GET['add_admin']."' | sudo tee -a /home/steam/.config/unity3d/IronGate/Valheim/adminlist.txt";
+    $ID = preg_replace("/[^0-9]/", "", $_GET['add_admin'] );
+    $full_command = "sudo echo '".$ID."' | sudo tee -a /home/steam/.config/unity3d/IronGate/Valheim/adminlist.txt";
     $command = exec($full_command);
-    header("Location: $_SERVER[PHP_SELF]?AnB=true");
+    header("Location: $_SERVER[PHP_SELF]");
     exit;
   }
   if (isset($_GET['remove_admin'])) {
-    $full_command = "sudo sed -i '/^".$_GET['remove_admin']."/d' /home/steam/.config/unity3d/IronGate/Valheim/adminlist.txt";
+    $ID = preg_replace("/[^0-9]/", "", $_GET['remove_admin'] );
+    $full_command = "sudo sed -i '/^".$ID."/d' /home/steam/.config/unity3d/IronGate/Valheim/adminlist.txt";
     $command = exec($full_command);
-    header("Location: $_SERVER[PHP_SELF]?AnB=true");
+    header("Location: $_SERVER[PHP_SELF]");
     exit;
   }
   if (isset($_GET['add_ban'])) {
-    $full_command = "sudo echo '".$_GET['add_ban']."' | sudo tee -a /home/steam/.config/unity3d/IronGate/Valheim/bannedlist.txt";
+    $ID = preg_replace("/[^0-9]/", "", $_GET['add_ban'] );
+    $full_command = "sudo echo '".$ID."' | sudo tee -a /home/steam/.config/unity3d/IronGate/Valheim/bannedlist.txt";
     $command = exec($full_command);
-    header("Location: $_SERVER[PHP_SELF]?AnB=true");
+    header("Location: $_SERVER[PHP_SELF]");
     exit;
   }
   if (isset($_GET['remove_ban'])) {
-    $full_command = "sudo sed -i '/^".$_GET['remove_ban']."/d' /home/steam/.config/unity3d/IronGate/Valheim/bannedlist.txt";
+    $ID = preg_replace("/[^0-9]/", "", $_GET['remove_ban'] );
+    $full_command = "sudo sed -i '/^".$ID."/d' /home/steam/.config/unity3d/IronGate/Valheim/bannedlist.txt";
     $command = exec($full_command);
-    header("Location: $_SERVER[PHP_SELF]?AnB=true");
+    header("Location: $_SERVER[PHP_SELF]");
     exit;
+  }
+  if (isset($_GET['ID_to_Verify'])) {
+    $ID_to_Verify = preg_replace("/[^0-9]/", "", $_GET['ID_to_Verify'] );    
+    $url = "https://steamidfinder.com/lookup/" . $ID_to_Verify;
+    $fp = file_get_contents($url);
+    $res = preg_match("/<title>(.*)<\/title>/siU", $fp, $title_matches);
+    $title_array = explode(" ", $title_matches[1]);
+    if ($title_array[0] == "steam" || $title_array[0] == "404" || $title_array[0] == "") {
+      $Verified_ID = 'UNVERIFIED';
+    } else {
+      $Verified_ID = $ID_to_Verify;
+    }
   }
 }
 
@@ -170,8 +188,6 @@ if (file_exists("/var/www/html/download/".$world.".fwl")) {
   $has_seed = false;
   $text_row = '8';
 }
-
-session_start();
 
 // Hide mods accordion panel for users logged in
 if (isset($_SESSION['login']) && $_SESSION['login'] == $hash) {
@@ -1051,6 +1067,17 @@ if(isset($_GET['logout'])) {
         // *************************************** //
         // ********** Logged In Content ********** //
         // *************************************** //
+
+        // Version Control
+        $url = "https://raw.githubusercontent.com/Peabo83/Valheim-Server-Web-GUI/main/.gitignore/version";
+        $latest_version = file_get_contents($url);
+        $latest_version = strtok($latest_version, "\n");
+        if ($version == $latest_version) {
+          // DO NOTHING
+        } else {
+          echo "<div class='row alert alert-danger' role='alert'><div class='col-12'><span class='glyphicon glyphicon-warning-sign'></span> Your version of this GUI is out out of date. (current version: ".$version." - latest version:<a href='https://github.com/Peabo83/Valheim-Server-Web-GUI'>".$latest_version."</a>)</div></div>";
+        }
+        // End Version Control
         ?>
       <div class="panel panel-primary">
         <div class="panel-heading" role="tab" id="headingTwo">
@@ -1085,8 +1112,10 @@ if(isset($_GET['logout'])) {
                     <div class="panel-body">
                       <?php
                         $log = shell_exec('sudo grep "Got connection SteamID\|Closing socket\|has wrong password\|Got character ZDOID from\|World saved" /var/log/syslog');
-                        $log = str_replace('Apr', '<br>Apr', $log);
-                        echo $log;
+                        $log_array = explode("\n", $log);
+                        foreach ($log_array as $key => $value) {
+                          echo $value . "<br>";
+                        }
                       ?>
                     </div>
                   </div>
@@ -1096,7 +1125,7 @@ if(isset($_GET['logout'])) {
           </div>
         </div>
       </div>
-      <?php if ($server_log == true) { ?>
+      <?php if ($admins_and_bans == true) { ?>
       <div class="panel panel-primary">
         <div class="panel-heading" role="tab" id="headingFour">
           <h4 class="panel-title">
@@ -1107,53 +1136,37 @@ if(isset($_GET['logout'])) {
         </div>
         <div id="collapseFour" class="panel-collapse <?php echo $server_accordion;?>" role="tabpanel" aria-labelledby="headingFour">
           <div class="panel-body">
-                <?php if (isset($_GET['AnB'])) {?>
-                  <div class="row">
-                    <div class="col-12">
-                      <div class="alert alert-danger" role="alert">
-                        <span class="glyphicon glyphicon-alert"></span> Server restart needed for changes to take effect. (or maybe not?)
-                      </div>
-                    </div>
-                  </div>
-                <?php }?>
-            <div class="row">
+            <div class="row" style="flex-direction: row-reverse;">
               <div class="col-md-4">
                 <div class="thumbnail">
-                  <div class="row">
-                    <div class="col-md-8">
-                      Recent Players
-                    </div>
-                    <div class="col-md-4">
-                      add to:
-                    </div>
-                  </div>
                   <?php
-                    $recent_players = shell_exec('sudo grep handshake /var/log/syslog');
-                    $recent_players = nl2br($recent_players);
-                    $recent_players_array = explode('<br />', $recent_players);
-                    //print_r($recent_players_array);
-                    $already_shown = array();
-                    foreach ($recent_players_array as $key => $value) {
-
-                      $steam_long_id = substr($value, strpos($value, "client") + 6);
-                      $steam_long_id = str_replace(' ', '', $steam_long_id);
-                      if (!in_array($steam_long_id, $already_shown) && !empty($steam_long_id && $steam_long_id != "") ) {
-                        echo "<div class='row AnB_item'>
-                                <div class='col-md-8'>
-                                  <a target=_blank href='https://steamidfinder.com/lookup/" . $steam_long_id . "'>" . $steam_long_id . "</a>
-                                </div>
-                                <div class='col-md-2'>
-                                  <button class='btn btn-success btn-xs' onclick=\"location.href='index.php?add_admin=".$steam_long_id."';\" >Admin</button>
-                                </div>
-                                <div class='col-md-2'>
-                                  <button class='btn btn-danger btn-xs' onclick=\"location.href='index.php?add_ban=".$steam_long_id."';\">Ban</button>
-                                </div>
-                              </div>";
-                        $already_shown[] = $steam_long_id;
+                  // Location of banlist.txt
+                  $file = fopen("/home/steam/.config/unity3d/IronGate/Valheim/bannedlist.txt", "r");
+                  $already_shown = array();
+                  $extra_IDs_to_show = array();
+                  //Output lines until EOF reached
+                  while(! feof($file)) {
+                      $line = fgets($file);
+                      $line = str_replace("// List banned players ID  ONE per line", "Bans", $line);
+                      if (strpos($line, 'Bans') !== false) {
+                        echo "<div class='row'><div class='col-md-12'>" .$line . "</div></div>";
+                      } else {
+                        $clean_line = strtok($line, "\n");
+                        if (!empty($line) && $clean_line != "" ) {
+                          $extra_IDs_to_show[] = $line;
+                          $url = "https://steamidfinder.com/lookup/" . $line;
+                          $fp = file_get_contents($url);
+                          $res = preg_match("/<title>(.*)<\/title>/siU", $fp, $title_matches);
+                          $title_array = explode(" ", $title_matches[1]);
+                          if ($title_array[0] == "steam" || $title_array[0] == "404" || $title_array[0] == "") {
+                            echo "<div class='row AnB_item'><div class='col-md-10'><a target=_blank href='https://steamidfinder.com/lookup/" . $clean_line . "'>Error:ID not Found</a></div><div class='col-md-2'><button class='btn btn-danger btn-xs' onclick=\"location.href='index.php?remove_ban=".$clean_line."'\" ><span class='glyphicon glyphicon-trash'></span></button></div></div>";
+                          } else {
+                            echo "<div class='row AnB_item'><div class='col-md-10'><a data-toggle='tooltip' data-placement='top' title='ID: ".$line."' target=_blank href='https://steamidfinder.com/lookup/" . $clean_line . "'>".$title_array[0]."</a></div><div class='col-md-2'><button class='btn btn-danger btn-xs' onclick=\"location.href='index.php?remove_ban=".$clean_line."'\" ><span class='glyphicon glyphicon-trash'></span></button></div></div>";
+                          }
+                        }
                       }
-                    }
-
-
+                  }
+                  fclose($file);
                   ?>
                 </div>
               </div>
@@ -1171,7 +1184,16 @@ if(isset($_GET['logout'])) {
                       } else {
                         $clean_line = strtok($line, "\n");
                         if (!empty($line) && $clean_line != "" ) {
-                          echo "<div class='row AnB_item'><div class='col-md-10'><a target=_blank href='https://steamidfinder.com/lookup/" . $line . "'>".$line."</a></div><div class='col-md-2'><button class='btn btn-danger btn-xs' onclick=\"location.href='index.php?remove_admin=".$clean_line."'\" ><span class='glyphicon glyphicon-trash'></span></button></div></div>";
+                          $extra_IDs_to_show[] = $line;
+                          $url = "https://steamidfinder.com/lookup/" . $line;
+                          $fp = file_get_contents($url);
+                          $res = preg_match("/<title>(.*)<\/title>/siU", $fp, $title_matches);
+                          $title_array = explode(" ", $title_matches[1]);
+                          if ($title_array[0] == "steam" || $title_array[0] == "404" || $title_array[0] == "") {
+                            echo "<div class='row AnB_item'><div class='col-md-10'><a target=_blank href='https://steamidfinder.com/lookup/" . $line . "'>Error: ID not Found</a></div><div class='col-md-2'><button class='btn btn-danger btn-xs' onclick=\"location.href='index.php?remove_admin=".$clean_line."'\" ><span class='glyphicon glyphicon-trash'></span></button></div></div>";
+                          } else {
+                          echo "<div class='row AnB_item'><div class='col-md-10'><a data-toggle='tooltip' data-placement='top' title='ID: ".$line."' target=_blank href='https://steamidfinder.com/lookup/" . $line . "'>".$title_array[0]."</a></div><div class='col-md-2'><button class='btn btn-danger btn-xs' onclick=\"location.href='index.php?remove_admin=".$clean_line."'\" ><span class='glyphicon glyphicon-trash'></span></button></div></div>";
+                          }
                         }
                       }
                   }
@@ -1181,26 +1203,110 @@ if(isset($_GET['logout'])) {
               </div>
               <div class="col-md-4">
                 <div class="thumbnail">
+                  <div class="row">
+                    <div class="col-md-8">
+                      Recent Players
+                    </div>
+                    <div class="col-md-4">
+                      add to:
+                    </div>
+                  </div>
                   <?php
-                  // Location of banlist.txt
-                  $file = fopen("/home/steam/.config/unity3d/IronGate/Valheim/bannedlist.txt", "r");
-                  //Output lines until EOF reached
-                  while(! feof($file)) {
-                      $line = fgets($file);
-                      $line = str_replace("// List banned players ID  ONE per line", "Bans", $line);
-                      if (strpos($line, 'Bans') !== false) {
-                        echo "<div class='row'><div class='col-md-12'>" .$line . "</div></div>";
-                      } else {
-                        $clean_line = strtok($line, "\n");
-                        if (!empty($line) && $clean_line != "" ) {
-                          echo "<div class='row AnB_item'><div class='col-md-10'><a target=_blank href='https://steamidfinder.com/lookup/" . $clean_line . "'>".$clean_line."</a></div><div class='col-md-2'><button class='btn btn-danger btn-xs' onclick=\"location.href='index.php?remove_ban=".$clean_line."'\" ><span class='glyphicon glyphicon-trash'></span></button></div></div>";
-                        }
+
+                    $recent_players = shell_exec('sudo grep handshake /var/log/syslog');
+                    $recent_players = nl2br($recent_players);
+                    $recent_players_array = explode('<br />', $recent_players);
+                    foreach ($recent_players_array as $key => $value) {
+
+                      $steam_long_id = substr($value, strpos($value, "client") + 6);
+                      $steam_long_id = str_replace(' ', '', $steam_long_id);
+
+                      if (!in_array($steam_long_id, $already_shown) && !empty($steam_long_id && $steam_long_id != "") ) {
+                        $url = "https://steamidfinder.com/lookup/" . $steam_long_id;
+                        $fp = file_get_contents($url);
+                        $res = preg_match("/<title>(.*)<\/title>/siU", $fp, $title_matches);
+                        $title_array = explode(" ", $title_matches[1]);
+                        echo "<div class='row AnB_item'>
+                                <div class='col-md-7'>
+                                  <a data-toggle='tooltip' data-placement='top' title='ID: ".$steam_long_id."' target=_blank href='https://steamidfinder.com/lookup/" . $steam_long_id . "'>" . $title_array[0] . "</a>
+                                </div>
+                                <div class='col-md-3'>
+                                  <button class='btn btn-success btn-xs' onclick=\"location.href='index.php?add_admin=".$steam_long_id."';\" >Admin</button>
+                                </div>
+                                <div class='col-md-2'>
+                                  <button class='btn btn-danger btn-xs' onclick=\"location.href='index.php?add_ban=".$steam_long_id."';\">Ban</button>
+                                </div>
+                              </div>";
+                        $already_shown[] = strip_tags($steam_long_id);
                       }
-                  }
-                  fclose($file);
+                    }
+
+                    foreach ($extra_IDs_to_show as $key => $value) {
+                      $steam_long_id = preg_replace("/[^0-9]/", "", $value );
+                      if (!in_array($steam_long_id, $already_shown) && !empty($steam_long_id && $steam_long_id != "") ) {
+                        $url = "https://steamidfinder.com/lookup/" . $steam_long_id;
+                        $fp = file_get_contents($url);
+                        $res = preg_match("/<title>(.*)<\/title>/siU", $fp, $title_matches);
+                        $title_array = explode(" ", $title_matches[1]);
+                        echo "<div class='row AnB_item'>
+                                <div class='col-md-7'>
+                                  <a data-toggle='tooltip' data-placement='top' title='ID: ".$steam_long_id."' target=_blank href='https://steamidfinder.com/lookup/" . $steam_long_id . "'>" . $title_array[0] . "</a>
+                                </div>
+                                <div class='col-md-3'>
+                                  <button class='btn btn-success btn-xs' onclick=\"location.href='index.php?add_admin=".$steam_long_id."';\" >Admin</button>
+                                </div>
+                                <div class='col-md-2'>
+                                  <button class='btn btn-danger btn-xs' onclick=\"location.href='index.php?add_ban=".$steam_long_id."';\">Ban</button>
+                                </div>
+                              </div>";
+                        $already_shown[] = $steam_long_id;
+                      }
+                    }
+
+
                   ?>
                 </div>
               </div>
+          </div>
+          <?php
+            if (isset($Verified_ID)) {
+              if ($Verified_ID == 'UNVERIFIED') {
+                echo "<div class='row'>
+                        <div class='col-12'>
+                          <div class='alert alert-danger' role='alert'>
+                            <span class='glyphicon glyphicon-exclamation-sign' aria-hidden='true'></span>
+                            <span class='sr-only'>Error:</span>
+                            Unable to validate entered ID. See <a href='https://steamidfinder.com/'>SteamIDFinder.com</a> for getting someones steamID64(Dec).
+                          </div>
+                        </div>
+                      </div>";
+              } else {
+                $url = "https://steamidfinder.com/lookup/" . $Verified_ID;
+                $fp = file_get_contents($url);
+                $res = preg_match("/<title>(.*)<\/title>/siU", $fp, $title_matches);
+                $title_array = explode(" ", $title_matches[1]);
+                $name = $title_array[0];
+                echo "<div class='row'>
+                        <div class='col-12'>
+                          <div class='alert alert-success' role='alert'>
+                            <span class='glyphicon glyphicon-ok' aria-hidden='true'></span>
+                            <span class='sr-only'>Success:</span>
+                            Verified ID: <a href='https://steamidfinder.com/lookup/".$Verified_ID."'>".$name."</a> <button class='btn btn-success btn-xs' onclick=\"location.href='index.php?add_admin=".$Verified_ID."';\" >Admin</button> <button class='btn btn-danger btn-xs' onclick=\"location.href='index.php?add_ban=".$Verified_ID."';\">Ban</button>
+                          </div>
+                        </div>
+                      </div>";
+              }
+            }
+          ?>
+          <div class="row">
+            <div class="col-12">
+              <form method="get" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]);?>">
+              <div class="input-group">
+                <input type="text" name="ID_to_Verify" class="form-control" placeholder="Validate a steamID64(Dec) to add to Admin/Ban List">
+                <input type="submit" class="btn btn-success" class="form-control">
+              </div>
+              </form>
+            </div>
           </div>
         </div>
       </div>
